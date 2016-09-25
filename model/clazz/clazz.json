@@ -1,0 +1,31 @@
+loadData([{
+	"clazzId":4001,
+	"clazzName":"三年一班",
+	"clazzNumber":45,
+	"clazzTeacher":"二蛋儿",
+	"clazzMonitor":"花花"	
+},{
+	"clazzId":4002,
+	"clazzName":"三年二班",
+	"clazzNumber":42,
+	"clazzTeacher":"马马",
+	"clazzMonitor":"松松"	
+},{
+	"clazzId":4003,
+	"clazzName":"三年三班",
+	"clazzNumber":43,
+	"clazzTeacher":"垂垂",
+	"clazzMonitor":"咚咚"	
+},{
+	"clazzId":4004,
+	"clazzName":"四年一班",
+	"clazzNumber":45,
+	"clazzTeacher":"小二狗",
+	"clazzMonitor":"彤彤"	
+},{
+	"clazzId":4005,
+	"clazzName":"五年一班",
+	"clazzNumber":45,
+	"clazzTeacher":"姗姗",
+	"clazzMonitor":"莹莹"	
+}]);

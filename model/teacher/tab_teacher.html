@@ -1,0 +1,144 @@
+<script type="text/javascript">
+	$(function(){
+		//加载教师数据
+		loadTecData();
+		//为全选绑定事件
+		$(".opt_btns :checkbox").off("click");//解绑以前所绑定的change事件
+		$(".opt_btns :checkbox").click(function(){
+			var chk=$(".opt_btns :checkbox").prop("checked");//是否选中
+			if(chk){
+				$(".tecTab td :checkbox:visible").prop("checked",true);
+			}else{
+				$(".tecTab td :checkbox").prop("checked",false);
+			}
+			 
+		});
+		//为筛选按钮添加事件，查询符合条件的元素
+		//绑定事件之前先解绑事件
+		$(".selects_tc :submit").off("click");
+		$(".selects_tc :submit").click(function(){
+			var key=$(".selects_tc .search_key").val();//要搜索的类型
+			var val=$(".selects_tc .search_val").val();//要搜索的内容
+			var data= new Object();
+			data[key]=val;
+			//加载搜索的元素
+			loadTecData(data);
+		});
+		//为按钮绑定事件
+		
+		//绑定事件之前先解绑，避免重复绑定
+		$(".optTC_btns button").off("click");
+		$(".optTC_btns button").click(function(){
+			var optText=$(this).text();//获取点击的元素
+			switch(optText){
+				case "添加":
+					$(".tab_content").load("model/teacher/addTeacher.html");
+				break;
+				case "修改":
+					var chd=$(".tecTab tbody :checkbox:checked").map(function(index,item){
+						return item.value;
+						
+					}).get(0);
+					if(chd){
+						$(".tab_content").load("model/teacher/updTeacher.html");	
+					}else{
+						alert("请选择要修改的元素");
+					}
+				break;
+				case "删除":
+					var ids=$(".tecTab td :checkbox:checked").map(function(index,item){
+						return item.value;
+					}).get().join();
+					//将删除的id传送到后台
+					//要删除信息地址
+					if(ids){
+						var url="teacher/teachers.json";
+						url+="?time="+new Date().getTime();//清除缓存
+						$.ajax(url,{
+							dataType:"json",
+							data:{
+								ids:ids	
+							},
+							success: function(){
+								alert("删除成功");
+								loadTecData();
+							}
+							
+						});
+					}else{
+						alert("请选择要删除的元素");
+					}
+					
+				break;
+				case "刷新":
+					loadTecData();
+				break;
+				
+			}
+		});
+	});
+	//封装加载教师信息函数
+	function loadTecData(data){
+		url="http://127.0.0.1:80/web1601/day05/sms/model/teacher/teachers.json";
+		data=data||{};//用于查找与搜索相同的数据
+		//不跨域加载数据
+		$.get(url,data,loadData,"json");
+	}
+	//数据加载之后数据处理函数
+	function loadData(data){
+		//清除tbody原有信息
+		$(".tecTab tbody tr").remove(":not(':first')");
+		//清除全选框checked属性，默认未选中
+		$(".opt_btns :checkbox").prop("checked",false);
+		data.forEach(function(item,index){
+				var newTr=$(".tecTab .hiddenTr").clone().removeClass("hiddenTr");
+				newTr.find(":checkbox").val(item.teacherId);
+				newTr.children().eq(1).text(item.name);
+				newTr.children().eq(2).text(item.playAge);
+				newTr.children().eq(3).text(item.salary);
+				newTr.children().eq(4).text(item.rank);
+				$(".tecTab tbody").append(newTr);					
+			});
+	}
+</script>
+			<!--教师管理-->
+			<div class="inner">
+				<div class="selects_tc">
+					<select name="" id="" class="search_key">
+						<option value="name">姓名</option>
+						<option value="clazz">班级</option>
+						<option value="grade">成绩</option>
+					</select>
+					<input type="text" class="search_val">
+					<input type="submit" value="search">
+				</div>
+				<table class="tecTab">
+					<thead>
+						<tr>
+							<th>选择</th>
+							<th>姓名</th>
+							<th>工龄</th>
+							<th>薪资</th>
+							<th>等级</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr class="hiddenTr">
+							<td>
+				<input type="checkbox">
+							</td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+					</tbody>
+				</table>
+				<div class="optTC_btns opt_btns">
+					<input type="checkbox">
+					<button>添加</button>
+					<button>修改</button>
+					<button>删除</button>
+                    <button>刷新</button>
+				</div>
+			</div>

@@ -1,0 +1,25 @@
+loadData([{
+	"teacherId":2001,
+	"name":"王小二",
+	"playAge":10,
+	"salary":4000,
+	"rank":"二级教师"
+},{
+	"teacherId":2002,
+	"name":"二蛋儿",
+	"playAge":3,
+	"salary":3500,
+	"rank":"三级教师"
+},{
+	"teacherId":2003,
+	"name":"旺旺",
+	"playAge":4,
+	"salary":4000,
+	"rank":"四级教师"
+},{
+	"teacherId":2005,
+	"name":"聪聪",
+	"playAge":10,
+	"salary":6000,
+	"rank":"特级教师"
+}]);

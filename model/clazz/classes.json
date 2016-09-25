@@ -1,0 +1,31 @@
+[{
+	"id":2001,
+	"clazzName":"三年一班",
+	"clazzNum":45,
+	"master":"二蛋儿",
+	"monitor":"花花"	
+},{
+	"id":2002,
+	"clazzName":"三年二班",
+	"clazzNum":42,
+	"master":"马马",
+	"monitor":"松松"	
+},{
+	"id":2003,
+	"clazzName":"三年三班",
+	"clazzNum":43,
+	"master":"垂垂",
+	"monitor":"咚咚"	
+},{
+	"id":2004,
+	"clazzName":"四年一班",
+	"clazzNum":45,
+	"master":"小二狗",
+	"monitor":"彤彤"	
+},{
+	"id":2005,
+	"clazzName":"五年一班",
+	"clazzNum":45,
+	"master":"姗姗",
+	"monitor":"莹莹"	
+}]

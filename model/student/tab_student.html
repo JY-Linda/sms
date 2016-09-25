@@ -1,0 +1,207 @@
+<script type="text/javascript">
+
+$(function(){
+		//跨域
+		loadStudentData()
+	//为全选绑定事件 change
+	$(".opt_btns :checkbox").off("change");
+	$(".opt_btns :checkbox").change(function(){
+		if($(this).prop("checked")){
+			$("#stuTbl td :checkbox:visible").prop("checked",true);	
+		}else{
+			$("#stuTbl td :checkbox").prop("checked",false);	
+		}
+	});
+	//为按钮添加事件
+	$(".opt_btns button").off("click");
+	$(".opt_btns button").click(function(){
+		//opt 按钮中的文字
+		var opt=$(this).text();
+		switch(opt){
+			case "添加":{
+				//加载添加学生页面
+				url="model/student/addStudent.html";
+				url+="?time="+new Date().getTime();
+				$(".tab_content").load(url);
+			break;
+				}
+			case "修改":{
+				var ids=$("#stuTbl :checkbox:checked").map(function(index,item){
+					return item.value;	
+				}).get(0);
+				if(ids){
+					//加载修改学生的页面
+					var stu;
+					//加载要修改学生信息地址
+					var url="model/student/updStudent.json";
+					$.ajax(url,{
+						dataType:"json",
+						async:false,
+						data:{
+							ids:ids	
+						},
+						success:function(data){
+							stu = data[0];
+							console.log(stu);
+						}
+					});
+					//修改后学生信息传递地址
+					url="model/student/updStudent.html";
+					url+="?time="+new Date().getTime();
+					//加载修改学生信息的页面
+					$(".tab_content").load(url,function(){
+						console.log("初始化页面");
+						$("#addStudents :text[name='name']").val(stu.name);	
+						
+						//$("#addStudents :radio:checked").val(stu.gender);
+						});	
+				}else{
+					alert("请选择要修改的元素");
+				}
+				
+			break;
+				}
+			case "刷新":{
+				loadStudentData();
+			break;
+			}
+			case "删除":
+				//获取要删除元素的id
+				var ids=$("#stuTbl :checkbox:checked").map(function(index,item){
+					return item.value;	
+				}).get().join();
+				//将删除的id传送到后台
+				//要删除信息地址
+				if(ids){
+					var url="student/student.json";
+					$.ajax(url,{
+						dataType:"jsonp",
+						jsonp:"jsonp",
+						jsonpCallback:"aa",
+						data:{
+							ids:ids
+							},
+						success: function(){
+							alert("删除成功");
+							//刷新
+							loadStudentData();	
+							
+						}	
+					});	
+				}else{
+					alert("请选择要删除的元素");
+				}
+				
+				break;
+		}
+	});
+	//为筛选按钮绑定事件 选取匹配条件的信息加载在页面上
+	$(".search :submit").off("click");
+	$(".search :submit").on("click",function(){
+		var key=$("select[name='search_key']").val();
+		var val=$(":text[name='search_val']").val();
+		var data=new Object();
+		data[key]=val;
+		//加载数据
+		loadStudentData(data);
+	});
+});
+//加载学生信息
+function loadStudentData(data){
+	//跨域加载数据
+	
+	/*
+	//加载数据地址
+	var url="http://172.16.20.58:80/web1601/day05/sms/model/student/student.json";
+	data=data||{};
+	$.ajax(url,{
+		dataType:"jsonp",
+		data:data,
+		jsonp:"jsonp",
+		jsonpCallback:"loadData"		
+	});
+	*/
+	//不跨域加载信息
+	var url="http://127.0.0.1:80/web1601/day05/sms/model/student/students.json";
+	url+="?time="+new Date().getTime();
+	data=data||{};
+	$.ajax(url,{
+		method:"GET",
+		dataType:"JSON",
+		data:data,
+		success: loadData
+	});
+}
+
+
+function loadData(data){
+	
+	//清空tbody原有信息
+	$("#stuTbl tbody tr").remove(":not(:first)");
+	//为全选框去除checked属性，默认未选中
+	$(".opt_btns :checkbox").prop("checked",false);
+	data.forEach(function(item,index){
+		//克隆行（结构）
+		var newTr=$("#stuTbl .hiddenTr").clone().removeClass("hiddenTr");
+		//将内容填充到结构
+		newTr.find(":checkbox").val(item.id);
+		newTr.children().eq(1).text(item.name);
+		newTr.children().eq(2).text(item.clazz);
+		newTr.children().eq(3).text(item.gender);
+		newTr.children().eq(4).text(item.grade);
+		//将内容追加到tr
+		$("#stuTbl tbody").append(newTr);
+			
+	});	
+}
+
+</script>
+<style type="text/css">
+	#stuTbl th{
+		background:#99f;
+		height:24px;
+		
+		}
+	
+</style>
+<!--学生管理-->
+			<div class="inner">
+				<div class="search">
+					<select name="search_key">
+						<option value="name">姓名</option>
+						<option value="clazz">班级</option>
+						<option value="grade">成绩</option>
+					</select>
+					<input type="text" name="search_val">
+					<input type="submit" value="search">
+				</div>
+				<table id="stuTbl">
+					<thead>
+						<tr>
+							<th>选择</th>
+							<th>姓名</th>
+							<th>班级</th>
+							<th>性别</th>
+							<th>分数</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr class="hiddenTr">
+							<td>
+				<input type="checkbox">
+							</td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+					</tbody>
+				</table>
+				<div class="opt_btns">
+					<input type="checkbox">
+					<button>添加</button>
+					<button>修改</button>
+					<button>删除</button>
+                    <button>刷新</button>
+				</div>
+			</div>

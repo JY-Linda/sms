@@ -1,0 +1,126 @@
+<style type="text/css">
+	h2{
+		margin:10px 0;
+	}
+	.return{
+		position:absolute;
+		right:20px;
+		top:20px;
+		font-weight:bold;
+	}
+</style>
+<script type="text/javascript">
+	function loadClazzToSelect(){
+		//加载所学生信息，添加到下拉菜单
+		var url="model/clazz/classes.json";
+		url+="?time="+new Date().getTime();
+		
+		$.get(url,function(data){
+				//将select中的option清空，不选择第一个
+				$("select[name='clazzId']").children(":gt(0)").remove();
+				data.forEach(function(item){
+				//创建新的option
+				var newOpt=$("<option value='"+item.id+"'>"+item.clazzName+"</option>");
+				
+				//追加
+				$("select[name='clazzId']").append(newOpt);
+			},"json");
+			
+				
+		});		
+		}
+	$(function(){
+		//加载班级信息
+		loadClazzToSelect();
+		//为返回添加事件
+		$(".return").off("click");
+		$(".return").click(function(){
+			$(".tab_content").load("model/student/tab_student.html");//注意是要放在主页面加载的，所以地址要相对主页面而不是当前页面
+		});	
+		//为form添加事件
+		$("form[name='addStuForm']").off("submit");
+		$("form[name='addStuForm']").submit(function(event){
+			//阻止表单的默认提交
+			event.preventDefault();
+			// return false;
+			//获取每个表单的值
+			var name=$(":text[name='name']").val();
+			var gender=$(":radio:checked").val();
+			var grade=$(":text[name='grade']").val();
+			var clazz=$("#addStudents select :checked").val();
+			var url="model/student/tab_student.html";
+			var data={
+					name:name,
+					gender:gender,
+					grade:grade,
+					clazz:clazz	
+				}
+			
+			//跨域传送数据
+			$.ajax(url,
+			{
+				method:"POST",
+				dataType:"jsonp",
+				data:data,
+				jsonp:"jsonp",
+				jsonpCallback:"handler",
+				success:function(){
+					alert("保存成功");
+					$("form[name='addStuForm']")[0].reset();//重置页面
+				},
+				error:function(){
+					alert("保存失败");
+				}
+			});	
+		});
+	});
+	function handler(data){
+		conosle.log(data);
+	}
+</script>
+<div class="inner">
+<h2>修改学生信息</h2>
+<a href="javascript:void(0)" class="return" >返回</a>
+<form action="saveStudent.action" method="post" name="addStuForm">
+<table>
+	
+        <tbody id="addStudents">
+        	 
+        	<tr>
+            	<td>姓名</td>
+               
+                <td>
+                	<input type="text" name="name"/>
+                	<input type="hidden" name="name" value=""/>
+                </td>
+            </tr>
+            <tr>
+            	<td>性别</td>
+                <td><input type="radio" name="gender" checked="checked" value="male"/>男
+                	<input type="radio" name="gender" value="female"/>女
+                </td>
+            </tr>
+            <tr>
+            	<td>分数</td>
+                <td><input type="text" name="grade"/></td>
+            </tr>
+            <tr>
+            	<td>班级</td>
+                <td>
+                	<select name="clazzId">
+                    	<option value="">请选择</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+            	<td colspan="2">
+                	<input type="submit" value="添加"/>
+                    <input type="reset" value="重置"/>
+                	
+                </td>
+            </tr>
+        </tbody>
+  
+</table>
+</form>
+<div>

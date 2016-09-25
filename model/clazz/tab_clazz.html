@@ -1,0 +1,115 @@
+<script type="text/javascript">
+	$(function(){
+		
+		loadClazzData();
+		//为全选绑定事件
+		$(".opt_che :checkbox").off("click");
+		$(".opt_che :checkbox").click(function(){
+			var opt=$(".opt_che :checkbox").prop("checked");
+			if(opt){
+				$(".claTab tbody :checkbox:visible").prop("checked",true);	
+			}else{
+				$(".claTab tbody :checkbox:visible").prop("checked",false);
+			}
+		});
+		//为按钮添加事件
+		$(".opt_che button").off("click");
+		$(".opt_che button").click(function(){
+			var txt=$(this).text();
+			switch(txt){
+				case "添加":
+				break;
+				case "修改":
+				break;
+				case "删除":
+					var ids=$(".claTab :checkbox:checked").map(function(index,item){
+						return item.value;
+					}).get().join();
+					if(ids){
+						$.ajax("model/clazz/clazz.json",{
+							dataType:"json",
+							data:{
+									ids:ids
+								},
+							success:function(){
+								alert(1);
+							}
+						});
+					}else{
+						alert("请选择要删除的元素");
+					}
+				break;
+				case "刷新":
+					loadClazzData();
+				break;
+				
+			}	
+		});
+	});
+	//封装加载班级数据函数
+	function loadClazzData(){
+		var url="http://172.16.13.115:80/web1601/day05/sms/model/clazz/clazz.json";
+		//跨域
+		$.ajax(url,{
+			dataType:"jsonp",
+			jsonp:"clazz",
+			jsonpCallback:"loadData"
+		});	
+	}
+	//ajax成功后执行的函数
+	function loadData(data){
+		$(".claTab tbody tr").remove(":not(:first)");
+		$(data).each(function(index,item){
+			var newTr=$(".hiddenTr").clone().removeClass("hiddenTr");
+			newTr.find(":checkbox").val(item.clazzId);
+			newTr.children().eq(1).text(item.clazzName);
+			newTr.children().eq(2).text(item.clazzNumber);
+			newTr.children().eq(3).text(item.clazzTeacher);
+			newTr.children().eq(4).text(item.clazzMonitor);
+			$(".claTab tbody").append(newTr);     
+		});
+		
+	}
+</script>
+<link rel="stylesheet" href="model/clazz/clazz.css"/>
+			<!--班级管理-->
+			<div class="inner">
+				<div class="selects">
+					<select name="" id="">
+						<option value="name">姓名</option>
+						<option value="clazz">班级</option>
+						<option value="grade">成绩</option>
+					</select>
+					<input type="text">
+					<input type="submit" value="search">
+				</div>
+				<table class="claTab">
+					<thead>
+						<tr>
+							<th>选择</th>
+							<th>班级名称</th>
+							<th>班级人数</th>
+							<th>班主任</th>
+							<th>班长</th>
+						</tr>
+					</thead>
+					<tbody >
+						<tr class="hiddenTr">
+							<td>
+				<input type="checkbox">
+							</td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+					</tbody>
+				</table>
+				<div class="opt_btns opt_che">
+					<input type="checkbox">
+					<button>添加</button>
+					<button>修改</button>
+					<button>删除</button>
+                    <button>刷新</button>
+				</div>
+			</div>
